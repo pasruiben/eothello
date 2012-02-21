@@ -1,0 +1,58 @@
+/*[variables]
+colors
+{
+	@36: #FFFFFF;
+	@20: #282828;
+	@10: #191E28;
+	@00: #714E4E;
+}
+*/
+BODY 
+{	background: rgb(25, 30, 40);	color: white;	margin: auto;	width: 60%;	position: relative;}A 
+{	color: #FFA500;	text-decoration: none;}A:hover 
+{	color: #FF6600;}img 
+{	display: block;}.headfootstyle 
+{	font-size: smaller;}.line 
+{	border: dotted thin #666699;	clear: left;}.centered-table 
+{	margin-left: auto;	margin-right: auto;	text-align: center;	border: none;}.centered-table td 
+{	padding: 5px 5px 5px 5px;	border: solid 1px;}.centered-table-aux 
+{	margin-left: auto;	margin-right: auto;	text-align: center;	border: none;}.centered 
+{	display: block;	margin-left: auto;	margin-right: auto;}.centeredsmall 
+{	font-size: smaller;	display: block;	margin-left: auto;	margin-right: auto;	text-align: center;}.centered-table-aux td 
+{	padding: 5px 5px 5px 5px;}#loginbox 
+{	width: 20%;	text-align: center;}.button 
+{	background-color: #F1F1F1;	border: 1px solid #999999;	color: #444444;	cursor: pointer;	margin-top: 3%;}.textinput 
+{	width: 78%;}.head-table 
+{	background-color: #666699;}.evenrow 
+{	background-color: #505060;}.oddrow 
+{	background-color: #444455;}#informationlist li 
+{	font-size: smaller;	list-style-type: circle;}#informationlist 
+{	float: right;}#greeting 
+{	clear: left;}#index 
+{	text-align: justify;}.changetable 
+{	margin-left: auto;	margin-right: auto;	background-color: #333344;	border: thin;	/*-moz-border-radius:10px;*/}.changetable td 
+{	padding: 5px 5px 5px 5px;}.lhome 
+{	clear: right;	text-align: center;	font-size: smaller;}.centered 
+{	text-align: center;}#userbox 
+{	clear: right;}.lessonlist li 
+{	padding-top: 1%;	list-style-type: circle;}.lessonlist ul 
+{	text-align: left;}.lessonlistaux li 
+{	display: inline;	padding-left: 1%;	padding-right: 1%;}.lessonlistaux ul 
+{	text-align: center;}#gamestyle 
+{	text-align: center;	border-collapse: collapse;	border: none;}#gamestyle tr 
+{	vertical-align: middle;	text-align: center;}#gamestyle tr td 
+{	padding: 0;}.validationimg 
+{	border: none;}.error 
+{	text-decoration: underline;}.collapseTable 
+{	border-collapse: collapse;}.collapseTable tr td 
+{	padding: 0;}.topcell 
+{	vertical-align: top;}.valError 
+{	font-size: smaller;	color: #6f6f6f;}.phpErrors ul 
+{	font-size: smaller;	color: #6f6f6f;	list-style-type: circle;}.dinamicError 
+{	background: #FFAAAA url('../images/reject.gif') no-repeat;	background-position: center right;}.dinamicVal 
+{	background: white url('../images/accept.gif') no-repeat;	background-position: center right;}#progressBar 
+{	background: white;	height: 100%;	width: 0%;}#Bar 
+{	border: 1px solid gray;	height: 0.2em;	overflow: hidden;	width: 90%;}.iedivh 
+{	border: solid 1px;	width: 350px;	height: 200px;	overflow: auto;	background: black;	text-align: left;}.chat 
+{	margin: 10px 10px 10px 10px;}.chat p 
+{	line-height: 6%;}
