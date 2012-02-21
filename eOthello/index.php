@@ -1,0 +1,11 @@
+<?php
+//se conecta a la base de datos, incluye las funciones php necesarias y abre el head
+include_once('inc/h_header.php');
+//cierra el head y abre el body, añadiendo la información sobre la página (usuarios registrados, [partidas completadas]? y partidas en juego)
+include_once('inc/h_footer_body.php');
+//muestra el formulario de conexión si no estás conectado o la barra de opciones si sí lo estás
+include_once('userbox.php');
+?><h1>Welcome to eOthello!</h1><div id="index">	<p>		eOthello is an online <a href="http://en.wikipedia.org/wiki/Reversi">Othello</a>		community where you can play this exciting game against other people		around the world. It is a completely free, easy to use website,		developed for and by Othello players.	</p>	<p>		You can <a href="games.php?cond=pending">join games</a> created by		others, or <a href="create_game.php">create your own games</a> and wait		for others to join them. You can also challenge players you would like		to play against! You will be able to play several games simultaneously,		<a href="games.php?cond=current">watch others as they play</a>, or even		<a href="games.php?cond=finished">check finished games!</a><br />		See the stats of <a href="players.php?start=0&amp;count=1000">our		members</a>, and try to reach the top of the list!<br />	</p>	<p>		You are free to play at your own pace. Some players complete many		games in one sitting. Others prefer to take it easier, making perhaps		one move a day. The limit is 72 hours per turn. Time defaults		automatically count as a win for the opponent.	</p>	<p>		If you haven't played Othello before, take a look at the <a		href="http://en.wikipedia.org/wiki/Reversi#Rules">rules</a>, where you		will find the basics to get you ready to go!	</p>	<p>		Got any doubts, suggestions or advice concerning the website? Please		feel free to <a href="contact.php">contact</a> us!	</p>	<p>		Othello, a minute to learn, a lifetime to master.	</p></div><?php
+//muestra las opciones del footer y las imágenes de valid xhtml y css
+include_once('inc/footer.php');
+?>
