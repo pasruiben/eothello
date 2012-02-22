@@ -1,22 +1,16 @@
 var noerror = true;
 var retry_interval = 1000; //cada segundo intentamos conectar con el servidor de eventos
-
-
 var time_board = 0;
 var time_chat = 0;
-
 var f_time = true;
-
 var chat_load = false;
 var username;
-
 var move_index;
 
-
-//tamaño de las imágenes
+//tamanyo de las imagenes
 var	cellsize = 45;
 
-//tamaño del tablero (8x8)
+//tamanyo del tablero (8x8)
 var	width = 8;
 var	height = 8;
 
@@ -63,27 +57,27 @@ var CORNE = 38;
 var CORSE = 39;
 var CORSW = 40;
 
-//array de imágenes (indexado por las constantes de arriba)
+//array de imagenes (indexado por las constantes de arriba)
 var	picture = [];
-//array que contiene el tablero en sí
+
+//array que contiene el tablero en si
 var	board = new Array(width);	
+
 //lista de movimientos
 var moves;
 
 //booleano que indica si es tu turno o no
 var	yourTurn;
+
 //indica el rol (papel) que juegas en la partida: puede ser WHITE para jugador blanco, BLACK para jugador negro o NONE para espectador (ya que no influye en la partida)
 var role;
 
 //identificador de partida
 var id_game;
-
 var status;
-
-
 var showofflinegamemenu = false;;
 
-//crea el objeto XMLHttpRequest según el navegador
+//crea el objeto XMLHttpRequest segun el navegador
 function ajaxObject()
 {
     try
@@ -103,7 +97,6 @@ function ajaxObject()
             return new ActiveXObject("Microsoft.XMLHTTP");
         }
     }
-
 }
 
 var globalXml = ajaxObject();
@@ -113,9 +106,13 @@ function is_ie7()
 	return (document.documentElement && typeof document.documentElement.style.maxHeight!="undefined");
 }
 
-if (is_ie7()){ /*window.onerror = function() {};*/ window.onbeforeunload = function() { globalXml.abort();};    }
+if (is_ie7())
+{ 
+	/*window.onerror = function() {};*/ 
+	window.onbeforeunload = function() { globalXml.abort();};    
+}
    
-//obtiene el número de la imagen del documento que tiene por nombre 'name'
+//obtiene el numero de la imagen del documento que tiene por nombre 'name'
 function lookup(name) 
 {
 	var res = -1;
@@ -132,21 +129,21 @@ function lookup(name)
     return res;
 }
 
-//definición "constructor" del objeto piece
+//definicion "constructor" del objeto piece
 function piece(imagename) 
 {	
     this.imagenum = lookup(imagename);
     this.player = NONE;    
 }
 
-//asocia una imagen con un número (de las constantes definidas)
+//asocia una imagen con un numero (de las constantes definidas)
 function LoadPieceImage(picnum, pictureURL) 
 {
     picture[picnum] = new Image();
     picture[picnum].src = './images/' + pictureURL;
 }
 
-//coloca la imagen dada por src en la posición del tablero x, y
+//coloca la imagen dada por src en la posicion del tablero x, y
 function SetPieceImage(x, y, src) 
 {	    
 	//miramos si vamos a hacer un cambio para prevenir redibujado innecesario
@@ -159,8 +156,7 @@ function SetPieceImage(x, y, src)
     }
 }
 
-
-//carga las imágenes de las piezas
+//carga las imagenes de las piezas
 function LoadImages()
 {    
     LoadPieceImage(NONE, "blank2.png");
@@ -210,6 +206,7 @@ function LoadImages()
 function InitializeBoard() 
 {	    
     var x;
+    
     //construye el array board, es un array de arrays
     for (x = 0; x < width; x++)
     {
@@ -228,12 +225,13 @@ function InitializeBoard()
 		//creamos la imagen que representa a la pieza que hay en esta celda, tiene una serie de eventos javascript asociados en onClick, onMouseOver y onMouseOut            
 		document.write('<td><img src="' + picture[A+x].src + '" border="0" height="' + cellsize/2 + '" width="' + cellsize + '" /></td>');                  
 	}		
+	
     document.write('<td><img src="' + picture[CORNE].src + '" border="0" height="' + cellsize/2 + '" width="' + cellsize/2 + '" /></td></tr>');                
     
 	//para cada fila
     for (y = 0; y < height; y++) 
 	{	
-        //empezamos en una línea nueva
+        //empezamos en una linea nueva
         document.write('<tr><td><img src="' + picture[ONE + y].src + '" border="0" height="' + cellsize + '" width="' + cellsize/2 + '" /></td>');       
 		
 		//para cada celda
@@ -244,10 +242,11 @@ function InitializeBoard()
 			board[x][y] = new piece('c[' + x + ',' + y + ']');   
             board[x][y].player = NONE;            
 		}		
+		
         document.write('<td><img src="' + picture[ONE2 + y].src + '" border="0" height="' + cellsize + '" width="' + cellsize/2 + '" /></td></tr>');        
     }	        
     
-    //última fila
+    //ultima fila
     document.write('<tr><td><img src="' + picture[CORSW].src + '" border="0" height="' + cellsize/2 + '" width="' + cellsize/2 + '" /></td>');       
 		
 	//para cada celda
@@ -256,12 +255,12 @@ function InitializeBoard()
 		//creamos la imagen que representa a la pieza que hay en esta celda, tiene una serie de eventos javascript asociados en onClick, onMouseOver y onMouseOut            
 		document.write('<td><img src="' + picture[A2+x].src + '" border="0" height="' + cellsize/2 + '" width="' + cellsize + '" /></td>');                  
 	}		
+	
     document.write('<td><img src="' + picture[CORSE].src + '" border="0" height="' + cellsize/2 + '" width="' + cellsize/2 + '" /></td></tr>');
-    
     document.write('</table>');
 }
 
-//cuenta el número de piezas que capturaríamos si pusiésemos una pieza en la posición board[x,y] (cuenta en las 8 posibles direcciones de captura, horizontal, vertical y diagonal)
+//cuenta el numero de piezas que capturariamos si pusiesemos una pieza en la posicion board[x,y] (cuenta en las 8 posibles direcciones de captura, horizontal, vertical y diagonal)
 function NumFlips(x, y, player) 
 {	    
     var deltax, deltay, distance;
@@ -276,16 +275,19 @@ function NumFlips(x, y, player)
 			{			
 				posx = x + (distance * deltax);
 				posy = y + (distance * deltay);
+				
 				//paramos si nos salimos del tablero
 				if (posx < 0 || posx >= width || posy < 0 || posy >= height)
                 {
 					break;
                 }
-				//paramos si encontramos una casilla vacía
+                
+				//paramos si encontramos una casilla vacia
 				if (board[posx][posy].player == NONE)
                 {
 					break;
                 }
+                
 				//si encontramos una pieza nuestra, actualizamos la cuenta de piezas capturadas
 				if (board[posx][posy].player == player)
 				{ 				
@@ -299,11 +301,10 @@ function NumFlips(x, y, player)
     return count;
 }
 
-//pone una pieza de player (puede valer WHITE o BLACK)  en board[x][y], sin chequear que sea posible (ya se habrá hecho antes)
+//pone una pieza de player (puede valer WHITE o BLACK)  en board[x][y], sin chequear que sea posible (ya se habra hecho antes)
 function RawPutPiece(x, y, player) 
 {	
 	board[x][y].player = player;  
-
     SetPieceImage(x, y, picture[player].src);
 }
 
@@ -324,17 +325,20 @@ function FlipPieces(x, y)
 			{
 				posx = x + (distance * deltax);
 				posy = y + (distance * deltay);
+				
 				//paramos si nos salimos del tablero
 				if (posx < 0 || posx >= width || posy < 0 || posy >= height)
                 {
 					break;
                 }
-				//paramos si encontramos una casilla vacía
+                
+				//paramos si encontramos una casilla vacia
 				if(board[posx][posy].player == NONE)
                 {
 					break;
                 }
-				//si encontramos una pieza nuestra, capturamos todo lo que haya entre ésta y la que pusimos orginalmente
+                
+				//si encontramos una pieza nuestra, capturamos todo lo que haya entre esta y la que pusimos orginalmente
 				if(board[posx][posy].player == role) 
 				{					
 					for(distance -= 1; distance > 0; distance--) 
@@ -350,18 +354,21 @@ function FlipPieces(x, y)
 	}
 }
 
-//indica si el jugador (WHITE o BLACK) puede hacer algún movimiento
+//indica si el jugador (WHITE o BLACK) puede hacer algun movimiento
 function AnyMoves(player) 
 {
     var x, y;
 
-    for (y = 0; y < height; y++){ 
+    for (y = 0; y < height; y++)
+    { 
 		for (x = 0; x < width; x++) 
 		{
-			if (board[x][y].player != NONE){ 
+			if (board[x][y].player != NONE)
+			{ 
 				continue;
             }
-			if (NumFlips(x, y, player) > 0){
+			if (NumFlips(x, y, player) > 0)
+			{
 				return true;
             }
 		} 
@@ -379,24 +386,24 @@ function CanPutPiece(x, y)
 		return false;
     }
     
-    //si la casilla no está vacía no puedes poner
+    //si la casilla no esta vacia no puedes poner
     if (board[x][y].player != NONE)
     {
 		return false;		
     }
     
-    //puedes poner si es tu turno, la casilla está vacía y al poner capturarías al menos una pieza rival
+    //puedes poner si es tu turno, la casilla esta vacia y al poner capturarias al menos una pieza rival
     return (NumFlips(x, y, role) > 0);
 }
 
-//si es posible poner una pieza en board[x,y] dibuja la versión semi-transparente de la pieza para indicar al jugador que puede poner ahí
+//si es posible poner una pieza en board[x,y] dibuja la version semi-transparente de la pieza para indicar al jugador que puede poner ahi
 function CheckPutPiece(x, y) 
 {
     var over;      
    
     if (CanPutPiece(x, y)) 
 	{		
-	    //la pieza semitransparente será una u otra de acuerdo a nuestro rol (recordemos que si podemos poner pieza nuestro rol no va a ser NONE)
+	    //la pieza semitransparente sera una u otra de acuerdo a nuestro rol (recordemos que si podemos poner pieza nuestro rol no va a ser NONE)
 	    if (role == WHITE) 
         {        
 			over = WHITETRANS;
@@ -410,7 +417,7 @@ function CheckPutPiece(x, y)
 	}
 }
 
-//dibuja la pieza board[x,y] de acuerdo a la información que hay en board (sirve para volver al estado normal después de haber dibujado una versión semi-transparente)
+//dibuja la pieza board[x,y] de acuerdo a la informacion que hay en board (sirve para volver al estado normal despues de haber dibujado una version semi-transparente)
 function RestorePiece(x, y) 
 {   
     SetPieceImage(x, y, picture[board[x][y].player].src);
@@ -464,13 +471,16 @@ function GetBoardState()
     {
         for(x = 0; x < 8; x++)             
         {
-            if (board[x][y].player == NONE){
+            if (board[x][y].player == NONE)
+            {
                 state += "E";
             }
-            else if (board[x][y].player == BLACK){
+            else if (board[x][y].player == BLACK)
+            {
                 state += "B";
             }
-            else if (board[x][y].player == WHITE){
+            else if (board[x][y].player == WHITE)
+            {
                 state += "W";
             }
         }
@@ -479,19 +489,20 @@ function GetBoardState()
     return state;
 }
 
-//devuelve si una cadena recibida es un tablero válido o no
+//devuelve si una cadena recibida es un tablero valido o no
 function ValidBoard(state)
 {
-    //si no mide 64 no es válido
+    //si no mide 64 no es valido
     if (state.length != 64)
 	{
         return false;
     }
         
-    //si algún elemento no es ni E ni B ni W no es válido    
+    //si algun elemento no es ni E ni B ni W no es valido    
     for(i = 0; i < state.length; i++) 		
 	{            
 		ch = state.charAt(i);
+		
 		if (ch != "B" && ch != "W" && ch != "E")       
         {       
 		    return false;
@@ -501,7 +512,7 @@ function ValidBoard(state)
     return true;
 }
 
-//obtiene el número de piezas que tiene el jugador player
+//obtiene el numero de piezas que tiene el jugador player
 function GetScore(player)
 {
     var score = 0;
@@ -520,7 +531,7 @@ function GetScore(player)
     return score;
 }
 
-//obtiene el número de piezas que hay en tablero
+//obtiene el numero de piezas que hay en tablero
 function GetPieces(state)
 {
     var pieces = 0;
@@ -529,6 +540,7 @@ function GetPieces(state)
     for(i = 0; i < state.length; i++) 		
 	{            
 		ch = state.charAt(i);
+		
 		if (ch != "E")       
         {       
 		    pieces++;
@@ -537,9 +549,6 @@ function GetPieces(state)
     
     return pieces;
 }
-
-
-
 
 //construye la lista de movimientos bonita
 function BuildMovesList(moves_r)
@@ -550,6 +559,7 @@ function BuildMovesList(moves_r)
 	for(i = 0; i < moves_r.length; i += 2)
 	{
 		moves_string += (i/2+1) + '. ' + moves_r.charAt(i) + moves_r.charAt(i+1) + ' ';
+		
 		if ((i + 2) % 20 === 0)
         {
 			moves_string += '<br />';
@@ -601,6 +611,7 @@ function setinputmsg(input)
 function pressedEnter(event,input) 
 {
 	var code = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	
 	if (code == 13) 
 	{
 		SendMsg(input.value);
@@ -631,11 +642,10 @@ function UpdateStatus()
 
 function UpdateScore()
 {
-	//actualizamos el número de piezas de cada jugador
+	//actualizamos el numero de piezas de cada jugador
     document.getElementById('pwhite').innerHTML = GetScore(WHITE);
     document.getElementById('pblack').innerHTML = GetScore(BLACK);
 }
-
 
 function SetUsername(x)
 {
@@ -644,17 +654,16 @@ function SetUsername(x)
 
 function UpdateStatusWatcher()
 {
-	
 	var r, c;
 	
 	//si ha habido movimientos
 	if (moves.length > 0)
 	{
-		//buscamos de quién fue el último movimiento
+		//buscamos de quien fue el ultimo movimiento
 		c = moves.charCodeAt(moves.length - 2) - 97;
 		r = moves.charAt(moves.length - 1) - 1;
 		
-		//si el último en poner fue el negro
+		//si el ultimo en poner fue el negro
 		if (board[c][r].player == BLACK)
 		{
 			if (AnyMoves(WHITE))
@@ -669,10 +678,9 @@ function UpdateStatusWatcher()
 			{
 				status = GameEnded();
 				run_game_end();
-			}
-				
+			}	
 		}
-		//si el último en poner fue el blanco
+		//si el ultimo en poner fue el blanco
 		else
 		{
 			if (AnyMoves(BLACK))
@@ -702,13 +710,11 @@ function UpdateStatusWatcher()
 			run_game_end();
 		}
 	}
-
-
 }
 
 function UpdateTitle()
 {
-	//actualizamos el título de la ventana
+	//actualizamos el titulo de la ventana
 	if (role != NONE)
 	{
 		if (yourTurn)
@@ -731,7 +737,6 @@ function UpdateTitle()
 	{
 		document.title = status.substring(0,status.length - 1) + " - eOthello";
 	}
-
 }
 
 function connect_game()
@@ -739,122 +744,121 @@ function connect_game()
 	var xmlHttp = ajaxObject();
 	SetglobalXml(xmlHttp);
 	
-	xmlHttp.onreadystatechange = function() {
-
-	if (xmlHttp.readyState == 4 && xmlHttp.status >= 200 && xmlHttp.status < 300) // si la peticion tiene exito
-	{    	
-		var response = '';
-	    try 
-        {
-			response = eval('(' + xmlHttp.responseText + ')');
-
-        } catch(e) 
-        {
-            noerror = false;
-        }
-	
-		if(response != '' && response != '()')
-		{
-			var board = response.board;
-			var chat = response.chat;
+	xmlHttp.onreadystatechange = function() 
+	{
+		if (xmlHttp.readyState == 4 && xmlHttp.status >= 200 && xmlHttp.status < 300) // si la peticion tiene exito
+		{    	
+			var response = '';
 			
-			if(typeof board != "undefined")
+		    try 
+	        {
+				response = eval('(' + xmlHttp.responseText + ')');
+	        } 
+	        catch(e) 
+	        {
+	            noerror = false;
+	        }
+		
+			if(response != '' && response != '()')
 			{
-				var update = ValidBoard(board.board) && GetPieces(board.board) > GetPieces(GetBoardState()) && (!yourTurn || role == NONE);
-				if (update)
-				{
+				var board = response.board;
+				var chat = response.chat;
 				
-					//actualizamos el tablero con la cadena recibida
-					SetBoardState(board.board);
-					UpdateMove(board.moves);
-					UpdateScore();
+				if(typeof board != "undefined")
+				{
+					var update = ValidBoard(board.board) && GetPieces(board.board) > GetPieces(GetBoardState()) && (!yourTurn || role == NONE);
 					
-					//si somos jugadores
-					if (role != NONE)
+					if (update)
 					{
-						//si con el nuevo tablero podemos mover
-						if (AnyMoves(role))
+						//actualizamos el tablero con la cadena recibida
+						SetBoardState(board.board);
+						UpdateMove(board.moves);
+						UpdateScore();
+						
+						//si somos jugadores
+						if (role != NONE)
 						{
-							//entonces es nuestro turno
-							status = 'Your turn.';
-							yourTurn = true;
-						} 
-						else
-						{
-							yourTurn = false;
-							if (AnyMoves(OtherPlayer()))
+							//si con el nuevo tablero podemos mover
+							if (AnyMoves(role))
 							{
-								status = 'Opponent\'s turn again (you have no possible moves).';
-							}
+								//entonces es nuestro turno
+								status = 'Your turn.';
+								yourTurn = true;
+							} 
 							else
 							{
-								status = GameEnded();
-								run_game_end();
+								yourTurn = false;
+								
+								if (AnyMoves(OtherPlayer()))
+								{
+									status = 'Opponent\'s turn again (you have no possible moves).';
+								}
+								else
+								{
+									status = GameEnded();
+									run_game_end();
+								}
 							}
+							
+							UpdateTitle();
+						}
+						else
+						{
+							UpdateStatusWatcher();
 						}
 						
-						UpdateTitle();
+						UpdateStatus();
 					}
-					else
-					{
-						UpdateStatusWatcher();
-					}
-					
-					UpdateStatus();
-					
-					
-				}
-			
-				time_board = board.timestamp;
-			}
-			if(typeof chat != "undefined" && chat != "")
-			{
-				var max_time = 0;
-				for(i = 0; i < chat.length; i++)
-				{
-					var username = chat[i].username;
-					var msg = chat[i].message;
-					if(chat[i].timestamp > max_time) 
-                    {
-                        max_time = chat[i].timestamp;
-                    }
-					
-					if(role != NONE)
-                    {
-                        WriteMessageChat(username, msg);
-                    }
 				
+					time_board = board.timestamp;
 				}
-				time_chat = max_time;
+				if(typeof chat != "undefined" && chat != "")
+				{
+					var max_time = 0;
+					
+					for(i = 0; i < chat.length; i++)
+					{
+						var username = chat[i].username;
+						var msg = chat[i].message;
+						
+						if(chat[i].timestamp > max_time) 
+	                    {
+	                        max_time = chat[i].timestamp;
+	                    }
+						
+						if(role != NONE)
+	                    {
+	                        WriteMessageChat(username, msg);
+	                    }
+					}
+					
+					time_chat = max_time;
+				}
+				
+				noerror = true;	
 			}
-			
-			noerror = true;	
+			else
+			{
+				noerror = false;
+			}
 		}
-		else
-		{
+		
+		if (xmlHttp.readyState == 4) //si la peticion se completa
+		{      
+			
+			if (!noerror)
+	        {
+				setTimeout(function(){ connect_game(); }, retry_interval); 
+	        }
+			else
+	        {
+				connect_game();
+	        }
+	
 			noerror = false;
 		}
-		
-
-	}
-
-	if (xmlHttp.readyState == 4) //si la peticion se completa
-	{      
-		
-		if (!noerror)
-        {
-			setTimeout(function(){ connect_game(); }, retry_interval); 
-        }
-		else
-        {
-			connect_game();
-        }
-
-		noerror = false;
-	}
-
-
-};
+	};
+	
 	xmlHttp.open("GET","game_events.php?time_board="+time_board+"&time_chat="+time_chat+"&game_id="+id_game, true);
 	xmlHttp.send(null);
 }
@@ -863,7 +867,6 @@ function SetMoves(x)
 {
 	moves = x;
 }
-
 
 function UpdateMoves(x, y)
 {
@@ -895,7 +898,6 @@ function SetTurn(x)
     }
 }
 
-
 //establece el rol de esta persona en la partida (puede ser un jugador blanco, negro o un espectador)
 function SetRole(x)
 {	
@@ -911,33 +913,26 @@ function SetIdGame(x)
 function SendMove(x, y)
 {
     //mandamos el movimiento usando AJAX
-    //importante:indicamos el número de movimiento que es (para evitar el problema de que lleguen 2 movimientos en el orden inverso cuando un jugador mueve 2 veces)
-    
-	
+    //importante:indicamos el numero de movimiento que es (para evitar el problema de que lleguen 2 movimientos en el orden inverso cuando un jugador mueve 2 veces)
+
 	var xmlHttp = ajaxObject();
         
     xmlHttp.open("GET","updateboard.php?num=" + (((moves.length) / 2) + 1) + "&x=" + x + "&y=" + y + "&id=" + id_game, true);
     xmlHttp.send(null); 	   
 }
 
-//pone una pieza en board[x,y] pero sólo en caso de que se pueda, y además captura todas las piezas resultado de este movimiento (por tanto esta función es claramente diferente de RawPutPiece)
+//pone una pieza en board[x,y] pero solo en caso de que se pueda, y ademas captura todas las piezas resultado de este movimiento (por tanto esta funcion es claramente diferente de RawPutPiece)
 function PutPiece(x, y) 
 {   
-
     if (!CanPutPiece(x, y)) 
     {
 		return;
     }
 	
-		
 	FlipPieces(x, y); 
-		
 	SendMove(x, y);
-	
 	UpdateScore();
-	
 	UpdateMoves(x, y);
-	
 	
 	//tras hacer el movimiento ya no es nuestro turno si el rival puede hacer alguno 
 	if (AnyMoves(OtherPlayer()))
@@ -947,7 +942,7 @@ function PutPiece(x, y)
 	}
 	else
 	{
-		//si podemos hacer algún movimiento nosotros
+		//si podemos hacer algun movimiento nosotros
 		if (AnyMoves(role))
 		{
 			yourTurn = true;
@@ -963,9 +958,7 @@ function PutPiece(x, y)
 	}
 	
 	UpdateStatus();
-		
 	UpdateTitle();
-
 }
 
 function ini_board(board_r, game_id, role_r, turn, status_string,moves_r,username)
@@ -988,17 +981,12 @@ function ini_board(board_r, game_id, role_r, turn, status_string,moves_r,usernam
 		UpdateStatusWatcher();
 		UpdateStatus();
 	}
-
 }
-
-
 
 function showOffLineGameMenu()
 {
 	if(showofflinegamemenu) document.getElementById('MOVES_INTERACTIVE').innerHTML = '<table class = "centered-table"><tr><td><img src="./images/f4.png"  Onclick="go_ini();" /></td><td><img src="./images/f1.png"  Onclick="last_move();" /></td><td><img src="./images/f2.png"  Onclick="next_move();" /></td><td><img src="./images/f3.png"  Onclick="go_end();" /></td></tr></table>';
 }
-
-
 
 function ini_offline_game(moves, status_string)
 {
@@ -1017,7 +1005,6 @@ function ini_offline_game(moves, status_string)
 	run_game();
 }	
 
-
 function go_end()
 {
 	move_index = moves.length;
@@ -1030,7 +1017,6 @@ function go_ini()
 	run_game();
 }
 
-
 function next_move()
 {
 	if(move_index < moves.length)
@@ -1039,7 +1025,6 @@ function next_move()
 		run_game();
 	}
 }
-
 
 function last_move()
 {
@@ -1050,16 +1035,10 @@ function last_move()
 	}
 }
 
-
-
-
 function run_game()
 {
-
 	SetBoardState("EEEEEEEEEEEEEEEEEEEEEEEEEEEWBEEEEEEBWEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-
 	role = BLACK;
-	
 	var moves_offline = "";
 	
 	for(var i = 0; i < move_index; i +=2)
@@ -1068,6 +1047,7 @@ function run_game()
 		var move_y = moves.charCodeAt(i+1) - 49;
 		
 		FlipPieces(move_x, move_y); 
+		
 		if (AnyMoves(OtherPlayer()))
 		{
 			role = OtherPlayer();
@@ -1077,23 +1057,19 @@ function run_game()
 		moves_offline += move_y + 1;
 	}
 	
-	if(document.getElementById('moves')) document.getElementById('moves').innerHTML = BuildMovesList(moves_offline);
+	if(document.getElementById('moves'))
+	{
+		document.getElementById('moves').innerHTML = BuildMovesList(moves_offline);
+	}
 
 	UpdateScore();
-
 }
 
 function run_game_end()
 {
 	showofflinegamemenu = true;
-	
 	showOffLineGameMenu();
-	
 	move_index = moves.length;
 	
 	run_game();
 }
-
-
-
-
