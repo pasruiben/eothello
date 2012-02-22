@@ -1,5 +1,5 @@
 <?php
-$mail = false; // enviar mail de activación
+$mail = false; // enviar mail de activacion
 function sendLostPasswordEmail($username, $email, $newpassword)
 {
 	$ret = false;
@@ -10,8 +10,8 @@ function sendLostPasswordEmail($username, $email, $newpassword)
         username:  $username
         password:  $newpassword
     Regards Administration";
-	if (sendMail($email, $subject, $message, $from))
-		$ret = true;
+	if (sendMail($email, $subject, $message, $from))	{
+		$ret = true;	}	
 	return $ret;
 }
 function sendActivationEmail($username, $password, $uid, $email, $actcode)
@@ -27,15 +27,15 @@ function sendActivationEmail($username, $password, $uid, $email, $actcode)
             password:  $password
         Please click the link below to activate your account.
         $link
-        Regards Administration";        	if (sendMail($email, $subject, $message, $from))
-  	$ret = true;  	return $ret;
+        Regards Administration";        	if (sendMail($email, $subject, $message, $from))	{
+  		$ret = true;  	}  		return $ret;
 }
 function sendMail($to, $subject, $message, $from)
 {
 	$from_header = "From: $from";
 	$ret = false;
-	if (mail($to, $subject, $message, $from_header))
-		$ret = true;
+	if (mail($to, $subject, $message, $from_header))	{
+		$ret = true;	}	
 	return $ret;
 }
 ?>

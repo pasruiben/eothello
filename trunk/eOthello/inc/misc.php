@@ -3,8 +3,8 @@ $seed = "irjPftXjUR3o"; // the seed for the passwords
 function isLoggedIn()
 {
 	$ret = false;
-	if (session_is_registered('id_player') && session_is_registered('username'))
-		$ret = true;
+	if (session_is_registered('id_player') && session_is_registered('username'))	{
+		$ret = true;	}
 	return $ret;
 }
 function generate_code($length = 10)
@@ -23,22 +23,22 @@ function get_formated_duration($time_in_sec) {
 		$time_min = round(($time_in_sec/60),0);
 		$formated_time = ($time_min < 10 ? "0".$time_min : $time_min)." min";
 	}
-	//si es menos de un día
+	//si es menos de un dia
 	else if ($time_in_sec < 60*60*24) 	{
 		$time_hour = floor($time_in_sec/(60*60));
 		$time_min = fmod($time_in_sec,60*60)/60;
 		$time_min = round($time_min);
 		$formated_time = $time_hour." h ".($time_min < 10 ? "0".$time_min : $time_min)." min";
 	}
-	//si es menos de un año
+	//si es menos de un anyo
 	else if ($time_in_sec < 60*60*24*365) 	{
 		$time_day = floor($time_in_sec/(60*60*24));
 		$time_hour = floor(($time_in_sec-$time_day*60*60*24)/(60*60));
 		$time_min = round(($time_in_sec-($time_hour*60*60)-($time_day*60*60*24))/60,0);
 		$formated_time = $time_day." day".($time_day > 1 ? "s" : "")." ".$time_hour." h ".($time_min < 10 ? "0".$time_min : $time_min)." mins";
 	}
-	else
-		$formated_time = "Too long";
+	else	{
+		$formated_time = "Too long";	}	
 	return $formated_time;
 }
 function XOREncryption($InputString, $KeyPhrase){
