@@ -3,13 +3,15 @@
 include_once('inc/h_header.php');
 include_once('inc/h_footer_body.php');
 include_once('userbox.php');
-//recoge la condición que las partidas deben cumplir para ser mostradas
+//recoge la condicion que las partidas deben cumplir para ser mostradas
 if (isset($_REQUEST['cond']))
 {
 	$condition = $_REQUEST['cond'];
 
 	if(!isLoggedIn())
-		echo '<div class="lhome"><a href= "./index.php">Index</a></div>';
+	{
+		echo '<div class="lhome"><a href= "./index.php">Index</a></div>';	}
+	
 	$needLoggedIn = false;
 	$constant = '';
 	$web = '';
@@ -37,13 +39,17 @@ if (isset($_REQUEST['cond']))
 			break;
 	}
 	if (!isLoggedIn() && $needLoggedIn)
+	{
 		needLoggedIn();
+	}
 	else if ($constant != '')
 	{
 		echo '<div id="'.$constant.'"></div>';
 		echo '<script type="text/javascript">Start(\''.$constant.'\',\''.$web.'\');</script>';
 	}
 	else
+	{
 		echo '<p>Unknown value for cond variable.</p>';
+	}
 }
 include_once('inc/footer.php'); ?>
