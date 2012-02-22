@@ -1,12 +1,12 @@
 		<script	type="text/javascript" src="js/validator.js"></script>		<script	type="text/javascript" src="js/ajaxmod.js"></script>	</head>	<body>	<?php		
-	//estadísticas de la web
+	//estadisticas de la web
 	try 	{
 		$registered_users = registered_users();	
-		//obtenemos el número de partidas en juego
+		//obtenemos el numero de partidas en juego
 		$query = "SELECT id_game FROM games WHERE turn <> 'pending' AND turn <> 'finished'";		
 		$stmt = $dbh->query($query);
 		$games_in_progress = $stmt->rowCount();		
-		//obtenemos el número de partidas completadas
+		//obtenemos el numero de partidas completadas
 		$query = "SELECT id_game FROM games WHERE turn = 'finished'";
 		$stmt = $dbh->query($query);
 		$completed_games = $stmt->rowCount();	
