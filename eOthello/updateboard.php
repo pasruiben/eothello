@@ -90,7 +90,7 @@ function FlipPieces($x, $y, $turn, $board) {                        	if ($turn
 	return $board;}        
     
     //receives a string indicating the new state of the board, and updates the board accordingly (E: Empty, B: Black, W: White)
-    function SetBoardState($state)
+    function SetBoardState($state)	
     {	        	
         //add white and black pieces
         for($i = 0; $i < strlen($state); $i++) 		
