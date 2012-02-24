@@ -1,0 +1,10 @@
+
+TASKS TO DO BEFORE THE END OF THE WORLD
+
+
+- Dividir el script reminder.php separando en otro script la funcionalidad de enviar correos
+  recordando que te toca mover y agendarlo en el cron cada ¿12 o 24? horas.
+
+- El chat apesta. Intentar mejorarlo.
+
+- Create Game apesta bastante. Equipararlo a los retos personales.
