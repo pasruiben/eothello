@@ -1,6 +1,6 @@
 <?php 
 
-include_once ('inc/db_connect.php');
+include_once ('../inc/db_connect.php');
 
 try
 {
