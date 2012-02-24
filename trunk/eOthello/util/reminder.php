@@ -1,7 +1,7 @@
 <?php 
 
 session_start();
-include_once ('inc/misc.php');include_once ('inc/emails.php');include_once ('inc/db_connect.php');include_once ('inc/db_players.php');
+include_once ('../inc/misc.php');include_once ('../inc/emails.php');include_once ('../inc/db_connect.php');include_once ('../inc/db_players.php');
 
 if(isset($_REQUEST['pass']) && $_REQUEST['pass'] = "emailme"){	try 
 	{
