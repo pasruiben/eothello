@@ -7,4 +7,4 @@ TASKS TO DO BEFORE THE END OF THE WORLD
 
 - El chat apesta. Intentar mejorarlo.
 
-- Create Game apesta bastante. Equipararlo a los retos personales.
+- Create Game apesta bastante. Equipararlo a los retos personales. Además se podría añadir un tramo de ELO.
