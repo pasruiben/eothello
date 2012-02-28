@@ -2,8 +2,7 @@
 $seed = "irjPftXjUR3o"; // the seed for the passwords
 function isLoggedIn()
 {
-	$ret = false;
-	if (session_is_registered('id_player') && session_is_registered('username'))	{
+	$ret = false;	if (isset($_SESSION['id_player']) && isset($_SESSION['username']))	{
 		$ret = true;	}
 	return $ret;
 }
