@@ -37,7 +37,7 @@ if(isset($_REQUEST['count']) && isset($_REQUEST['start']))
 					<tr class="'.(($i % 2)?"oddrow":"evenrow").'">		
 						<td>'.($start+$i).'.</td>
 						<td ><a href= "stats.php?player='.$row["id_player"].'">'.$row["username"].'</a></td>
-						<td>'.$row["score"].'</td>
+						<td>'.round($row["score"]).'</td>
 						<td>'.$row["games_won"].' ('.round(($row["games_won"]/($total?$total:1))*10000)/100 .' %)</td>
 						<td>'.$row["games_draw"].' ('.round(($row["games_draw"]/($total?$total:1))*10000)/100 .' %)</td>
 						<td>'.$row["games_lost"].' ('.round(($row["games_lost"]/($total?$total:1))*10000)/100 .' %)</td>
