@@ -16,3 +16,5 @@ DONE !!
   recordando que te toca mover y agendarlo en el cron cada 12 horas.
   
 - Aparece el ELO de los jugadores en la ventana de la partida
+
+- Redondeado a números enteros el ELO de los jugadores para que no se vea feo con decimales.
