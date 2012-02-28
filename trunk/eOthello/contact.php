@@ -15,7 +15,7 @@ if(!isLoggedIn()) echo '<div class="lhome"><a href= "./index.php">Index</a></div
 </p>
 
 <div id="email">
-	<p><b>eothelloadmin@gmail.com</b></p>
+	<p><b>admin@eothello.com</b></p>
 </div>
 
 <?php 
