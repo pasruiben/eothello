@@ -72,7 +72,7 @@ if (isset($_REQUEST['register']))
 				else				{
 					// aki sabemos k a fallado el envio del mail, por lo k no podra activar su cuenta, las soluciones son, k nos envie un correo y se la activamos o k le pongamos direcamente el codigo de activacion
 					$link = "http://www.eothello.com/activate.php?uid=$id&actcode=$code";
-					//echo 'email: eothelloadmin@gmail.com';
+					//echo 'email: admin@eothello.com';
 					echo "your activation code is: $link";
 				}
 			}
