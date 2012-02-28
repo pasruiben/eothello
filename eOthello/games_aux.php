@@ -89,16 +89,16 @@ if (isset($_REQUEST['cond']))
 						echo '<tr class = "'.(($i % 2) ? "oddrow" : "evenrow").'">';
 						if ($condition == 'current')
 						{
-							echo '<td><a href = "stats.php?player='.$row['p1id'].'">'.$row['p1us'].'</a> ('.$row['p1sc'].')</td>
-									  <td><a href = "stats.php?player='.$row['p2id'].'">'.$row['p2us'].'</a> ('.$row['p2sc'].')</td>
+							echo '<td><a href = "stats.php?player='.$row['p1id'].'">'.$row['p1us'].'</a> ('.round($row['p1sc']).')</td>
+									  <td><a href = "stats.php?player='.$row['p2id'].'">'.$row['p2us'].'</a> ('.round($row['p2sc']).')</td>
                     <td>'.(($row['rated'])?"Yes":"No").'</td>
 									  <td>'.get_formated_duration($time - $row['time']).' ago</td>
 									  <td><a href = "game.php?id='.$row['id_game'].'&mode=spectator">Watch!</a></td>';   
 						}
 						else if ($condition == 'finished')
 						{
-							echo '<td><a href = "stats.php?player='.$row['p1id'].'">'.$row['p1us'].'</a> ('.$row['p1sc'].')</td>
-									  <td><a href = "stats.php?player='.$row['p2id'].'">'.$row['p2us'].'</a> ('.$row['p2sc'].')</td>';
+							echo '<td><a href = "stats.php?player='.$row['p1id'].'">'.$row['p1us'].'</a> ('.round($row['p1sc']).')</td>
+									  <td><a href = "stats.php?player='.$row['p2id'].'">'.$row['p2us'].'</a> ('.round($row['p2sc']).')</td>';
 							//winner
 							if ($row['winner'] == 'black')
 								echo '<td><a href = "stats.php?player='.$row['p1id'].'">'.$row['p1us'].'</a></td>';
@@ -111,7 +111,7 @@ if (isset($_REQUEST['cond']))
 						}
 						else if ($condition == 'pending')
 						{
-							echo '<td><a href = "stats.php?player='.$row['id_player'].'">'.$row['username'].'</a> ('.$row['score'].')</td>
+							echo '<td><a href = "stats.php?player='.$row['id_player'].'">'.$row['username'].'</a> ('.round($row['score']).')</td>
                     <td>'.(($row['rated'])?"Yes":"No").'</td>
                     <td>'."White".'</td>
 									  <td>'.get_formated_duration($time - $row['time']).' ago</td>
@@ -133,7 +133,7 @@ if (isset($_REQUEST['cond']))
 								$query = "SELECT username, score FROM players WHERE id_player = '$opponent_id'";
 								$stmt2 = $dbh->query($query);
 								$opponent = $stmt2->fetch();
-								$score = $opponent['score'];
+								$score = round($opponent['score']);
 								$opponent = $opponent['username'];
 							}
 							//obtenemos el mensaje de estado
