@@ -45,13 +45,13 @@ if (isLoggedIn() || $mode == 'spectator')
 			$row = $stmt->fetch();			
 				
             //obtiene informacion sobre el jugador negro
-		    $query = "SELECT username, id_player FROM players, games WHERE id_player = black AND id_game = '$id_game'";
+		    $query = "SELECT username, id_player, score FROM players, games WHERE id_player = black AND id_game = '$id_game'";
 			$stmt = $dbh->query($query);								
 			if ($stmt->rowCount() == 1)		
 				$black = $stmt->fetch();								
 			
             //obtiene informacion sobre el jugador blanco
-			$query = "SELECT username, id_player FROM players, games WHERE id_player = white AND id_game = '$id_game'";
+			$query = "SELECT username, id_player, score FROM players, games WHERE id_player = white AND id_game = '$id_game'";
 			$stmt = $dbh->query($query);								
 			if ($stmt->rowCount() == 1)		
 				$white = $stmt->fetch();
@@ -104,10 +104,10 @@ if (isLoggedIn() || $mode == 'spectator')
                     
                     <tr>
                         <td></td>
-                        <td><a href = "stats.php?player='.$black['id_player'].'">'.$black['username'].'</a></td>
+                        <td><a href = "stats.php?player='.$black['id_player'].'">'.$black['username'].' ('.$black['score'].')</a></td>
                         <td><div id="pblack"></div></td>
                         <td><div id="turn"></div></td>
-                        <td><a href = "stats.php?player='.$white['id_player'].'">'.$white['username'].'</a></td>
+                        <td><a href = "stats.php?player='.$white['id_player'].'">'.$white['username'].' ('.$white['score'].')</a></td>
                         <td><div id="pwhite"></div></td>
                         <td></td>
                     </tr>';
@@ -138,7 +138,7 @@ if (isLoggedIn() || $mode == 'spectator')
                         <td></td>
                         <td></td>
                         <td>
-                        	<script type="text/javascript">ini_offline_game("'.$moves.'", "' . $turnString . '");</script>'	;
+                        	<script type="text/javascript">ini_offline_game("'.$moves.'", "' . $turnString . '");</script>
                         </td>
 						<td></td>
                         <td></td>
