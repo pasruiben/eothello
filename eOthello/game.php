@@ -104,10 +104,10 @@ if (isLoggedIn() || $mode == 'spectator')
                     
                     <tr>
                         <td></td>
-                        <td><a href = "stats.php?player='.$black['id_player'].'">'.$black['username'].' ('.$black['score'].')</a></td>
+                        <td><a href = "stats.php?player='.$black['id_player'].'">'.$black['username'].' </a> ('.$black['score'].') </td>
                         <td><div id="pblack"></div></td>
                         <td><div id="turn"></div></td>
-                        <td><a href = "stats.php?player='.$white['id_player'].'">'.$white['username'].' ('.$white['score'].')</a></td>
+                        <td><a href = "stats.php?player='.$white['id_player'].'">'.$white['username'].' </a> ('.$white['score'].') </td>
                         <td><div id="pwhite"></div></td>
                         <td></td>
                     </tr>';
