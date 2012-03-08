@@ -5,7 +5,7 @@ if(isLoggedIn())
 	if (isset($_REQUEST['challenged']) && isset($_REQUEST['color']) && isset($_REQUEST['rated']))
 	{
 		$challenged = (int)$_REQUEST['challenged'];
-		//controlamos que no se rete a sí mismo
+		//controlamos que no se rete a si mismo
 		if ($challenged == $id)		{
 			echo '<p>You can\'t challenge yourself.</p>';
 		}		else
