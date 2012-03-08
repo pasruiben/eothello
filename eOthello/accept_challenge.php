@@ -10,7 +10,7 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 		//obtenemos los id de los 2 jugadores que van a formar la nueva partida (retador y retado)
 		$query = "SELECT challenger, challenged, rated, color, random FROM challenges WHERE id_challenge = '$challenge' AND status = 'unanswered'";
 		$stmt = $dbh->query($query);
-		//comprobamos que de verdad existe el reto y que está sin aceptar
+		//comprobamos que de verdad existe el reto y que este sin aceptar
 		if ($stmt->rowCount() == 1)
 		{
 			$row = $stmt->fetch();
@@ -23,7 +23,7 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 			// y que de verdad eres el retado en ese reto
 			if ($challenged == $_SESSION['id_player'])
 			{
-				//comprobamos que el retador no tenga más de 19 partidas en juego
+				//comprobamos que el retador no tenga mas de 19 partidas en juego
 				$query = "SELECT id_game FROM games WHERE (black = '$challenger' OR white = '$challenger') AND turn <> 'finished'";
 				$stmt = $dbh->query($query);
 				if ($stmt->rowCount() > 19)
@@ -33,7 +33,7 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 				}
 				else
 				{
-					//comprobamos que el retado no tenga más de 19 partidas en juego
+					//comprobamos que el retado no tenga mas de 19 partidas en juego
 					$query = "SELECT id_game FROM games WHERE (black = '$challenged' OR white = '$challenged') AND turn <> 'finished'";
 					$stmt = $dbh->query($query);					
 					if ($stmt->rowCount() > 19)
@@ -43,7 +43,7 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 					}
 					else
 					{
-						//comenzamos la transacción
+						//comenzamos la transaccion
 						$dbh->beginTransaction();
 							
 						//actualizamos el estado del reto
@@ -55,7 +55,7 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 						//si la partida es de apertura aleatoria, hay que elegir una apertura y actualizar el tablero
 						if ($random)
 						{
-							//obtiene número de aperturas aleatorias
+							//obtiene numero de aperturas aleatorias
 							$query = "SELECT count(*) as num FROM openings";
 							$stmt = $dbh->query($query);
 							if ($stmt->rowCount() == 1)
@@ -102,7 +102,7 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 						$dbh->exec($query);
 						$message = '<p>Challenge successfully accepted.<br />
 	                              <a href="games.php?cond=mine">See your games.</a></p>';
-						//fin de la transacción
+						//fin de la transaccion
 						$dbh->commit();
 					}
 				}
