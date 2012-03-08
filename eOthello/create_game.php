@@ -22,4 +22,4 @@ else
 {
 	echo '<div class="lhome"><a href= "./index.php">Index</a></div><br />';
 	needLoggedIn();
-}include_once('inc/footer.php');  ?>
+}include_once('inc/footer.php');  ?>
