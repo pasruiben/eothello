@@ -1,5 +1,5 @@
 <?php
-//en realidad ya no manda solo la board, también la lista de movimientos... separados por un espacio
+//en realidad ya no manda solo la board, tambien la lista de movimientos... separados por un espacio
 function get_board($id_game){
 	global $dbh;
 	$board = 'N';
