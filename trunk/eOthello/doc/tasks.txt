@@ -4,7 +4,7 @@ TASKS TO DO BEFORE THE END OF THE WORLD
 
 - El chat apesta. Intentar mejorarlo.
 
-- Create Game apesta bastante. Equipararlo a los retos personales. Ademas se podria anyadir un tramo de ELO.
+- Se podria anyadir un tramo de ELO al create games.
 
 - Go to next game in each game. (burglar)
 
@@ -22,3 +22,5 @@ DONE !!
 - Aparece el ELO de los jugadores en la ventana de la partida
 
 - Redondeado a numeros enteros el ELO de los jugadores para que no se vea feo con decimales.
+
+- Create game mejorado. Ahora su funcionamiento es igual al de retos.
