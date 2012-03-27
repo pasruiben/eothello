@@ -45,9 +45,9 @@ if(isLoggedIn())
 			
 			$time = time();
 
-			$sql = "INSERT INTO games ($color, turn, time, rated, random_opening) 
+			$query = "INSERT INTO games ($color, turn, time, rated, random_opening) 
 					VALUE ('$id', 'pending', $time, $rated, $random)";
-			
+		
 			if ($dbh->exec($query))
 			{		
 				echo '<p>Game successfully created.<br /><a href="games.php?cond=mine">See your games.</a></p>';
