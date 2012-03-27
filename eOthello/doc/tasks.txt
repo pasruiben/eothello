@@ -14,6 +14,8 @@ TASKS TO DO BEFORE THE END OF THE WORLD
 
 DONE !!
 
+- Actualizar el código para que sea compatible con PHP 5.3.10
+
 - Dividir el script reminder.php separando en otro script la funcionalidad de enviar correos
   recordando que te toca mover y agendarlo en el cron cada 12 horas.
   
