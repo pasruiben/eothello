@@ -28,14 +28,19 @@ if(isLoggedIn())
 			}
 
 			//valor de color
-			$color = "random";
-			if ($_REQUEST['color'] == "White")
+			$color = $_REQUEST['color'];
+			if ($color == "White")
 			{
 				$color = "white";
 			}
-			else if ($_REQUEST['color'] == "Black")
+			else if ($color == "Black")
 			{
 				$color = "black";
+			}
+			else  //random
+			{
+				$color = "black, white";
+				$id = $id."', '".$id;
 			}
 			
 			$time = time();
