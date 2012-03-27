@@ -3,15 +3,7 @@ if(isLoggedIn())
 {
 	$id = $_SESSION['id_player'];
 	if(num_active_games($id)<=19)
-	{
-		if(create_new_game($id))
-		{
-			echo '<p>Game successfully created.<br /><a href="games.php?cond=mine">See your games.</a></p>';
-		}
-		else
-		{
-			echo '<p>Error when trying to create the game. Please contact the site administrators.</p>';
-		}
+	{		echo '<div align="center">				<form action="./add_game.php" method="post"> 					<label id = "userlabel" for="rated">Rated game:</label>					<select name="rated">						<option selected value="yes">Yes</option>						<option value="no">No</option>				 	</select>                    <br /><br />					<a href="random_opening.php">						<label id = "userlabel" for="rated">Random opening:</label>					</a>					<select name="random">						<option selected value="no">No</option>		                               						<option value="yes">Yes</option>					</select>					<br /><br />                      <label id = "userlabel" for="color">Play as:</label>					<select name="color">						<option value="Black">Black</option>						<option value="White">White</option>                       	<option selected value="Random">Random</option>					</select>					<br />					<input name="challenge" type="submit" value="Create!" class="button" />				</form>			</div>';
 	}
 	else
 	{
