@@ -66,8 +66,8 @@ function create_new_game($creator){
 }
 function join_game($id_game, $n_player){	global $dbh;
 	$time = time();
-	$ret = false;
-	$query = "UPDATE games SET white = '$n_player', turn = 'black', time = '$time' WHERE id_game = '$id_game'";
+	$ret = false;	$query = "SELECT black, white FROM games WHERE id_game = '$id_game'";		try 	{		$stmt = $dbh->exec($query);			if ($stmt->rowCount() == 1)		{			$row = $stmt->fetch();						$black = $row['black'];			$white = $row['white'];						// Si están rellenos ambos oponentes es que es aleatoria			// (en ambos estará el id del creador)			if ($black != null && $white != null)			{				$color = rand(1, 100) >= 50 ? "Black" : "White";								if ($color == "Black")				{					$black = $n_player;				} 				else 				{					$white = $n_player;				}			}			// Si solo está relleno el oponente negro es que el creador escogió negras			else if ($black != null)			{				$white = $n_player;			}			// El creador escogió blancas			else if ($white != null)			{				$black = $n_player;			}			else 			{				die("La partida está corrompida.");			}		}	}	catch(PDOException $e ) 	{		die("error: ".$e->GetMessage());	}	
+	$query = "UPDATE games SET black = '$black', white = '$white', turn = 'black', time = '$time' WHERE id_game = '$id_game'";
 	try 	{
 		if ($dbh->exec($query))
 		{
