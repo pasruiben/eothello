@@ -41,9 +41,9 @@ if (isset($_REQUEST['cond']))
 			$web = 'games_aux.php?cond=pending';
 			$constant = 'PGAMES'; //pending games
 			$id = $_SESSION['id_player'];
-			$query = "SELECT id_game, rated, username, id_player, score, games.time AS time FROM games, players WHERE turn = 'pending' AND black = id_player AND black <> $id ORDER BY games.time DESC";
+			$query = "SELECT id_game, rated, username, id_player, score, random_opening, black, white, games.time AS time FROM games, players WHERE turn = 'pending' AND black = id_player AND black <> $id ORDER BY games.time DESC";
 			$noGamesMessage = '<p>There are no games to join.</p>';
-			$columns = array('Creator (Score)', 'Rated', 'Your colour', 'Created', 'Join?');
+			$columns = array('Creator (Score)', 'Rated', 'Random', 'Your colour', 'Created', 'Join?');
 			break;
 		case 'mine':
 			$needLoggedIn = true;
@@ -110,12 +110,12 @@ if (isset($_REQUEST['cond']))
 									  <td><a href = "game.php?id='.$row['id_game'].'&mode=spectator">Watch!</a></td>';   
 						}
 						else if ($condition == 'pending')
-						{
-							echo '<td><a href = "stats.php?player='.$row['id_player'].'">'.$row['username'].'</a> ('.round($row['score']).')</td>
-                    <td>'.(($row['rated'])?"Yes":"No").'</td>
-                    <td>'."White".'</td>
-									  <td>'.get_formated_duration($time - $row['time']).' ago</td>
-									  <td><a href = "join.php?id_game='.$row['id_game'].'">Join!</a></td>';   	                    
+						{							if ($row['black'] != null && $row['white'] != null)							{								$mycolor = "Random"; 							}							else if ($row['black'] != null)							{								$mycolor = "White";							}							else 							{								$mycolor = "Black";							}							
+							echo '	<td><a href = "stats.php?player='.$row['id_player'].'">'.$row['username'].'</a> ('.round($row['score']).')</td>
+				                    <td>'.(($row['rated'])?"Yes":"No").'</td>				                    <td>'.(($row['random_opening'])?"Yes":"No").'</td>
+				                    <td>'.$mycolor.'</td>
+									<td>'.get_formated_duration($time - $row['time']).' ago</td>
+									<td><a href = "join.php?id_game='.$row['id_game'].'">Join!</a></td>';   	                    
 						}
 						else if ($condition == 'mine')
 						{
