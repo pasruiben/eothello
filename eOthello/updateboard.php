@@ -1,6 +1,9 @@
 <?php
 
-session_start();
+if (!isset($_SESSION))
+{
+	session_start();
+}
 include_once('inc/db_connect.php'); include_once('inc/misc.php');include_once ('inc/db_players.php');
 function EndGame($board){	$white = 0;	$black = 0;
 	for($y = 0; $y < 8; $y++)
@@ -88,160 +91,93 @@ function FlipPieces($x, $y, $turn, $board) {                        	if ($turn
 		}
 	}		            
 	return $board;}        
-    
-    //receives a string indicating the new state of the board, and updates the board accordingly (E: Empty, B: Black, W: White)
-    function SetBoardState($state)	
-    {	        	
-        //add white and black pieces
-        for($i = 0; $i < strlen($state); $i++) 		
-        {
-            $ch = substr($state, $i, 1);                       
-            $board[$i % 8][round(floor($i / 8))] = $ch;            
-        }   			             
-     
-        return $board;
-    }           
-    
-    function GetBoardState($board)
-    {
-        $res = "";		
-	
-        for($y = 0; $y < 8; $y++) 
-            for($x = 0; $x < 8; $x++)             
-				$res .= $board[$x][$y];
-						
-        return $res;
-    }
-	
-	function AnyMoves($turn, $board) 
-	{
-		for($y = 0; $y < 8; $y++){ 
-			for($x = 0; $x < 8; $x++) 
-			{
-				if ($board[$x][$y] != 'E') 
-					continue;
-				if (NumFlips($x, $y, $turn, $board) > 0) 
-					return(true);
-			}
-		}			
-		return(false);
-	}
-	
-    
-    if (isLoggedIn())
-    {                         
-        if(isset($_REQUEST['x']) && isset($_REQUEST['y']) && isset($_REQUEST['id']) && isset($_REQUEST['num']))
-        {                            
-            $x = (int)$_REQUEST['x'];
-            $y = (int)$_REQUEST['y'];            
-            $id_game = (int)$_REQUEST['id'];
-            $num = (int)$_REQUEST['num'];
-            $id_user = $_SESSION['id_player'];
-        
-            $query = "SELECT board, turn, moves, rated FROM games WHERE id_game = '$id_game' AND ((black = '$id_user' && turn = 'black') || (white = '$id_user' && turn = 'white'))";            
-			
-			try {
-	            $stmt = $dbh->query($query);			                        
-	            if ($stmt->rowCount() == 1) // sabemos que existe el game que nos han pasao y que el turno es correcto y que el usuario que nos envia esta peticion es white o black
-	            {	                 
-	            	$info = $stmt->fetch();
-	                $board = SetBoardState($info['board']);
-	                $turn = $info['turn'];
-					$moves = $info['moves'];
-                    $rated = $info['rated'];
-	                
-	                //si el movimiento es correcto y num es correcto
-                    $next_mov = strlen($moves) / 2 + 1;
-                    
-	                if ($next_mov == $num && CanPutPiece($x, $y, $turn, $board))
-	                {                                                                  
-	                    $board = FlipPieces($x, $y, $turn, $board);
-						
-	                    if ($turn == 'black')
-	                        $other_turn = 'white';
-	                    else
-	                        $other_turn = 'black';
-						
-						if (AnyMoves($other_turn, $board))                    
-							$turn = $other_turn;										
-	                    //si el otro no tiene movimientos y nosotros tampoco, la partida ha acabado
-						else if (!AnyMoves($turn, $board))
-	                    {                    
-	                        $turn = 'finished';                    
-	                        
-	                        $query = "SELECT p1.id_player AS whitep, p2.id_player AS blackp, p1.score AS whites, p2.score AS blacks FROM games, players AS p1, players AS p2  WHERE id_game = '$id_game' AND white = p1.id_player AND black = p2.id_player";            
-	                        $stmt = $dbh->query($query);
-	                        $info = $stmt->fetch();
-	                        $whitep = $info['whitep']; //white's id_player
-	                        $blackp = $info['blackp']; //black's id_player
-
-	                        $f_game = EndGame($board);
-	                        
-	                        if($f_game == 'draw')
-							{
-	                            
-	                            $query_black = "UPDATE players SET games_draw = games_draw + 1 WHERE id_player = '$blackp'";
-	                            $query_white = "UPDATE players SET games_draw = games_draw + 1 WHERE id_player = '$whitep'";                                        
-	                            
-                                if ($rated)
-                                    update_scores($blackp, $whitep, 0);
-
-	                        }
-	                        else
-							{
-	                            if($f_game == 'white')
-								{ // gana white
-	                            
-	                                $query_black = "UPDATE players SET games_lost = games_lost + 1 WHERE id_player = '$blackp'";
-	                                $query_white = "UPDATE players SET games_won = games_won + 1 WHERE id_player = '$whitep'"; 
-	                                
-                                    if ($rated)
-                                        update_scores($blackp, $whitep, -1);
-	                            }
-	                            else
-								{  // gana black
-	                                
-	                                $query_black = "UPDATE players SET games_won = games_won + 1 WHERE id_player = '$blackp'";
-	                                $query_white = "UPDATE players SET games_lost = games_lost + 1 WHERE id_player = '$whitep'"; 
-	   
-                                    if ($rated)
-                                        update_scores($blackp, $whitep, 1);
-	                            }   
-	                        }
-	                        
-	                        $dbh->exec($query_black);
-	                        $dbh->exec($query_white);    
-							
-							//actualizamos el campo winner
-							$query_winner = "UPDATE games SET winner = '$f_game' WHERE id_game = '$id_game'";
-							$dbh->exec($query_winner);
-	                    }
-
-						//actualizamos la lista de movimientos
-						$r = chr(ord('a') + $x);
-						$c = $y + 1;
-						$moves .= $r.$c;
-						
-						
-						$board = GetBoardState($board);                
-	                                    
-	                    $query = "UPDATE games SET board = '$board', turn = '$turn', moves = '$moves' WHERE id_game = '$id_game'";
-	                    $dbh->exec($query);  
-						
-						//actualizamos el timestamp
-						$time = time();
-						$query = "UPDATE players SET time = '$time' WHERE id_player = '$id_user'"; 
-						$dbh->exec($query);
-						$query = "UPDATE games SET time = '$time' WHERE id_game = '$id_game'"; 
-						$dbh->exec($query);
-						
-	                }
-	            }
-			}
-			catch(PDOException $e ) {
-				// tratamiento del error
-				echo "error: ".$e->GetMessage();
-			}
-        }
-    }
+//receives a string indicating the new state of the board, and updates the board accordingly (E: Empty, B: Black, W: White)function SetBoardState($state){	        		//add white and black pieces	for($i = 0; $i < strlen($state); $i++) 			{		$ch = substr($state, $i, 1);                       		$board[$i % 8][round(floor($i / 8))] = $ch;            	}   			             
+	return $board;}           
+function GetBoardState($board){	$res = "";			
+	for($y = 0; $y < 8; $y++) 	{
+		for($x = 0; $x < 8; $x++)             		{
+			$res .= $board[$x][$y];
+		}
+        return $res;
+    }}
+	
+function AnyMoves($turn, $board) {	for($y = 0; $y < 8; $y++)
+	{ 		for($x = 0; $x < 8; $x++) 
+		{			if ($board[$x][$y] != 'E')
+			{
+				continue;
+			}
+			
+			if (NumFlips($x, $y, $turn, $board) > 0) 
+			{
+				return(true);
+			}
+		}	}			
+	return(false);}
+if (isLoggedIn()){                         	if(isset($_REQUEST['x']) && isset($_REQUEST['y']) && isset($_REQUEST['id']) && isset($_REQUEST['num']))	{                            		$x = (int)$_REQUEST['x'];		$y = (int)$_REQUEST['y'];            
+		$id_game = (int)$_REQUEST['id'];
+		$num = (int)$_REQUEST['num'];		$id_user = $_SESSION['id_player'];
+		$query = "SELECT board, turn, moves, rated FROM games WHERE id_game = '$id_game' AND ((black = '$id_user' && turn = 'black') || (white = '$id_user' && turn = 'white'))";            
+		try 
+		{			$stmt = $dbh->query($query);			                        
+			if ($stmt->rowCount() == 1) // sabemos que existe el game que nos han pasao y que el turno es correcto y que el usuario que nos envia esta peticion es white o black			{	                 				$info = $stmt->fetch();				$board = SetBoardState($info['board']);				$turn = $info['turn'];				$moves = $info['moves'];				$rated = $info['rated'];
+				//si el movimiento es correcto y num es correcto				$next_mov = strlen($moves) / 2 + 1;
+				if ($next_mov == $num && CanPutPiece($x, $y, $turn, $board))				{                                                                  					$board = FlipPieces($x, $y, $turn, $board);
+					if ($turn == 'black')
+					{
+						$other_turn = 'white';
+					}
+					else
+					{
+						$other_turn = 'black';
+					}
+					if (AnyMoves($other_turn, $board)) 
+					{
+						$turn = $other_turn;										
+					}					//si el otro no tiene movimientos y nosotros tampoco, la partida ha acabado					else if (!AnyMoves($turn, $board))					{                    						$turn = 'finished';                    						$query = "SELECT p1.id_player AS whitep, p2.id_player AS blackp, p1.score AS whites, p2.score AS blacks FROM games, players AS p1, players AS p2  WHERE id_game = '$id_game' AND white = p1.id_player AND black = p2.id_player";            
+						$stmt = $dbh->query($query);						$info = $stmt->fetch();
+						$whitep = $info['whitep']; //white's id_player
+						$blackp = $info['blackp']; //black's id_player						$f_game = EndGame($board);
+						if($f_game == 'draw')						{							$query_black = "UPDATE players SET games_draw = games_draw + 1 WHERE id_player = '$blackp'";							$query_white = "UPDATE players SET games_draw = games_draw + 1 WHERE id_player = '$whitep'";                                        
+							if ($rated)							{
+								update_scores($blackp, $whitep, 0);
+							}
+						}						else						{							if($f_game == 'white') // gana white							{ 								$query_black = "UPDATE players SET games_lost = games_lost + 1 WHERE id_player = '$blackp'";								$query_white = "UPDATE players SET games_won = games_won + 1 WHERE id_player = '$whitep'"; 
+								if ($rated)
+								{
+									update_scores($blackp, $whitep, -1);
+								}							}							else // gana black							{  								$query_black = "UPDATE players SET games_won = games_won + 1 WHERE id_player = '$blackp'";								$query_white = "UPDATE players SET games_lost = games_lost + 1 WHERE id_player = '$whitep'"; 
+								if ($rated)
+								{
+									update_scores($blackp, $whitep, 1);
+								}							}   						}
+						$dbh->exec($query_black);
+						$dbh->exec($query_white);    
+						//actualizamos el campo winner
+						$query_winner = "UPDATE games SET winner = '$f_game' WHERE id_game = '$id_game'";
+						$dbh->exec($query_winner);
+					}
+					
+					//actualizamos la lista de movimientos
+					$r = chr(ord('a') + $x);
+					$c = $y + 1;
+					$moves .= $r.$c;
+					$board = GetBoardState($board);                
+					$query = "UPDATE games SET board = '$board', turn = '$turn', moves = '$moves' WHERE id_game = '$id_game'";
+					$dbh->exec($query);  
+					//actualizamos el timestamp
+					$time = time();
+					$query = "UPDATE players SET time = '$time' WHERE id_player = '$id_user'"; 
+					$dbh->exec($query);
+					$query = "UPDATE games SET time = '$time' WHERE id_game = '$id_game'"; 
+					$dbh->exec($query);
+				}
+			}
+		}
+		catch(PDOException $e ) 
+		{
+			echo "error: ".$e->GetMessage();
+		}
+	}
+}
 ?>
