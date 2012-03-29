@@ -1,5 +1,5 @@
-<?php
-//en realidad ya no manda solo la board, tambien la lista de movimientos... separados por un espacio
+<?phpinclude_once ('updateboard.php');
+//en realidad ya no manda solo la board, tambien la lista de movimientos... separados por un espacio
 function get_board($id_game){
 	global $dbh;
 	$board = 'N';
@@ -97,7 +97,7 @@ function exist_game($id_game)
 	}
 
 	return $ret;
-}
+}function random_opening($board){	global $dbh;		//obtiene numero de aperturas aleatorias	$query = "SELECT count(*) as num FROM openings";	$stmt = $dbh->query($query);	if ($stmt->rowCount() == 1)	{		$row = $stmt->fetch();		$numOpenings = $row['num'];				//elige una aleatoriamente		$opening = rand(1, $numOpenings);		//y obtiene la secuencia		$query = "SELECT sequence FROM openings WHERE id = $opening";		$stmt = $dbh->query($query);		if ($stmt->rowCount() == 1)		{			$row = $stmt->fetch();			$sequence = $row['sequence'];			//inicializa el array del tablero			$boardArray = SetBoardState($board);			$turn = 'black';			//aplica los movimientos			for ($mov = 0; $mov < strlen($sequence) / 2; $mov++)			{				$columna = substr($sequence, $mov * 2, 1);				$fila = substr($sequence, $mov * 2 + 1, 1);				$x = ord($columna) - ord('a');				$y = $fila - 1;				$boardArray = FlipPieces($x, $y, $turn, $boardArray);								if ($turn == 'black')					$turn = 'white';				else					$turn = 'black';			}			//obtiene la nueva cadena			$board = GetBoardState($boardArray);		}	}		return array('board' => $board, 'sequence' => $sequence);}//Devuelve un array con (board, sequence)function init_board($random){	$board = 'EEEEEEEEEEEEEEEEEEEEEEEEEEEWBEEEEEEBWEEEEEEEEEEEEEEEEEEEEEEEEEEE';	$sequence = '';		if ($random)	{		$array = random_opening($board);	}	else 	{		$array = array('board' => $board, 'sequence' => $sequence);	}		return $array;}
 function player($id_game, $id_player)
 {
 	global $dbh;	

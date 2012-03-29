@@ -1,7 +1,7 @@
 <?php
 include_once('inc/h_header.php');
 include_once('inc/h_footer_body.php');
-include_once ('updateboard.php');
+include_once ('updateboard.php');include_once('inc/db_games.php');
 $message = '';
 if(isLoggedIn() && isset($_REQUEST['challenge']))
 {
@@ -49,52 +49,9 @@ if(isLoggedIn() && isset($_REQUEST['challenge']))
 						//actualizamos el estado del reto
 						$query = "UPDATE challenges SET status = 'accepted' WHERE id_challenge = '$challenge'";
 						$dbh->exec($query);
-						//creamos la partida
-						//estado inicial del tablero
-						$board = 'EEEEEEEEEEEEEEEEEEEEEEEEEEEWBEEEEEEBWEEEEEEEEEEEEEEEEEEEEEEEEEEE';
-						//si la partida es de apertura aleatoria, hay que elegir una apertura y actualizar el tablero
-						if ($random)
-						{
-							//obtiene numero de aperturas aleatorias
-							$query = "SELECT count(*) as num FROM openings";
-							$stmt = $dbh->query($query);
-							if ($stmt->rowCount() == 1)
-							{
-								$row = $stmt->fetch();
-								$numOpenings = $row['num'];								
-								//elige una aleatoriamente
-								$opening = rand(1, $numOpenings);
-								//y obtiene la secuencia
-								$query = "SELECT sequence FROM openings WHERE id = $opening";
-								$stmt = $dbh->query($query);
-								if ($stmt->rowCount() == 1)
-								{
-									$row = $stmt->fetch();
-									$sequence = $row['sequence'];
-									//inicializa el array del tablero
-									$boardArray = SetBoardState($board);
-									$turn = 'black';
-									//aplica los movimientos
-									for ($mov = 0; $mov < strlen($sequence) / 2; $mov++)
-									{
-										$columna = substr($sequence, $mov * 2, 1);
-										$fila = substr($sequence, $mov * 2 + 1, 1);
-										$x = ord($columna) - ord('a');
-										$y = $fila - 1;
-										$boardArray = FlipPieces($x, $y, $turn, $boardArray);										
-										if ($turn == 'black')
-											$turn = 'white';
-										else
-											$turn = 'black';
-									}
-									//obtiene la nueva cadena
-									$board = GetBoardState($boardArray);
-								}
-							}
-						}
 						//el turno se lo asignamos al jugador negro (ya que conocemos los 2 jugadores)
 						$turn = 'black';						
-						$time = time();
+						$time = time();						$board = init_board($random);
 						if ($color == "Black" || ($color == "Random" && rand(1, 100) >= 50))
 							$query = "INSERT INTO games (black, white, board, turn, time, rated, moves, random_opening) VALUE ('$challenger', '$challenged', '$board', '$turn', $time, $rated, '$sequence', $random)";
 						else
