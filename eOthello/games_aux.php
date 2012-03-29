@@ -41,9 +41,9 @@ if (isset($_REQUEST['cond']))
 			$web = 'games_aux.php?cond=pending';
 			$constant = 'PGAMES'; //pending games
 			$id = $_SESSION['id_player'];
-			$query = "SELECT id_game, rated, username, id_player, score, random_opening, black, white, games.time AS time FROM games, players WHERE turn = 'pending' AND black = id_player AND black <> $id ORDER BY games.time DESC";
+			$query = "SELECT id_game, rated, username, id_player, score, random_opening, black, white, elo_min, elo_max, games.time AS time FROM games, players WHERE turn = 'pending' AND black = id_player AND black <> $id ORDER BY games.time DESC";
 			$noGamesMessage = '<p>There are no games to join.</p>';
-			$columns = array('Creator (Score)', 'Rated', 'Random', 'Your colour', 'Created', 'Join?');
+			$columns = array('Creator (Score)', 'Rated', 'Random', 'Your colour', 'Created', 'Elo', 'Join?');
 			break;
 		case 'mine':
 			$needLoggedIn = true;
@@ -110,12 +110,12 @@ if (isset($_REQUEST['cond']))
 									  <td><a href = "game.php?id='.$row['id_game'].'&mode=spectator">Watch!</a></td>';   
 						}
 						else if ($condition == 'pending')
-						{							if ($row['black'] != null && $row['white'] != null)							{								$mycolor = "Random"; 							}							else if ($row['black'] != null)							{								$mycolor = "White";							}							else 							{								$mycolor = "Black";							}							
+						{							if ($row['black'] != null && $row['white'] != null)							{								$mycolor = "Random"; 							}							else if ($row['black'] != null)							{								$mycolor = "White";							}							else 							{								$mycolor = "Black";							}														$query = "SELECT username, score FROM players WHERE id_player = '". $_SESSION['id_player'] ."'";							$stmtt = $dbh->query($query);							$player = $stmtt->fetch();							$score = round($player['score']);							$minElo = $row['elo_min'];							$maxElo = $row['elo_max'];														$join_msg = " - ";							if ($score >= $minElo && $score <= $maxElo)							{								$link = "join.php?id_game='".$row['id_game']."'";								$msg = "Join!";								$join_msg = '<a href = "' . $link . '">' . $msg . '</a>';							}														$elo_msg = $minElo .' - '. $maxElo; //hay elo minimo y elo maximo														if ($minElo == 0 && $maxElo != 9999)  //No hay elo minimo							{								$elo_msg = "< " .$maxElo;							}							else if ($minElo != 0 && $maxElo == 9999)  //No hay elo maximo							{								$elo_msg = "> " .$minElo;							}							else if ($minElo == 0 && $maxElo == 9999)  //Ni elo minimo ni elo maximo							{								$elo_msg = " - ";							}
 							echo '	<td><a href = "stats.php?player='.$row['id_player'].'">'.$row['username'].'</a> ('.round($row['score']).')</td>
 				                    <td>'.(($row['rated'])?"Yes":"No").'</td>				                    <td>'.(($row['random_opening'])?"Yes":"No").'</td>
 				                    <td>'.$mycolor.'</td>
-									<td>'.get_formated_duration($time - $row['time']).' ago</td>
-									<td><a href = "join.php?id_game='.$row['id_game'].'">Join!</a></td>';   	                    
+									<td>'.get_formated_duration($time - $row['time']).' ago</td>									<td>'. $elo_msg .'</td>
+									<td>'. $join_msg .'</td>';   	                    
 						}
 						else if ($condition == 'mine')
 						{
