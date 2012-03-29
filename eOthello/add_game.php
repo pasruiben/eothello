@@ -14,17 +14,17 @@ if(isLoggedIn())
 		try 
 		{
 			//valor de rated
-			$rated = true;
+			$rated = 1;
 			if ($_REQUEST['rated'] == "no")
 			{
-				$rated = false;
+				$rated = 0;
 			}
 			
 			//valor de random
-			$random = false;
+			$random = 0;
 			if ($_REQUEST['random'] == "yes")
 			{
-				$random = true;
+				$random = 1;
 			}
 
 			//valor de color
@@ -43,10 +43,14 @@ if(isLoggedIn())
 				$id = $id."', '".$id;
 			}
 			
+			$elo_min = $_REQUEST['eloMin'];
+			$elo_max = $_REQUEST['eloMax'];
+			
 			$time = time();
-
-			$query = "INSERT INTO games ($color, turn, time, rated, random_opening) 
-					VALUE ('$id', 'pending', $time, $rated, $random)";
+			$array = init_board($random);
+			
+			$query = "INSERT INTO games ($color, board, turn, time, rated, moves, random_opening, elo_min, elo_max) 
+					VALUE ('$id', '". $array['board'] ."', 'pending', $time, $rated, '". $array['sequence'] ."', $random, $elo_min, $elo_max)";
 		
 			if ($dbh->exec($query))
 			{		
