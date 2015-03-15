@@ -1,0 +1,1 @@
+eOthello is an online Othello community where you can play this exciting game against other people around the world. It is a completely free, easy to use website, developed for and by Othello players.
